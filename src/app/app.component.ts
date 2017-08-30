@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DataService } from './data.service';
 
 @Component({
   selector: 'app-root',
@@ -21,20 +22,44 @@ import { Component } from '@angular/core';
 
   <div *ngIf="anotherTest; else otherTmpl">Yeah, I exist.</div>
 
-  <div *ngIf="anotherTest; then tmpl1 else tmpl2">Yeah, I exist.</div>
+  <div *ngIf="anotherTest; then tmpl1 else tmpl2"></div>
 
-  <div *ngIf="!anotherTest; then tmpl1 else tmpl2">Yeah, I exist.</div>
+  <div *ngIf="!anotherTest; then tmpl1 else tmpl2"></div>
 
-  <ng-template #tmpl1>This is template 1.<br/><br/></ng-template>
+  <div *ngIf="displayPropertyBinding; then propertyBinding"></div>
 
-  <ng-template #tmpl2>This is template 2.<br/><br/></ng-template>
+  <ng-template #tmpl1>This is template 1. (TRUE)<br/><br/></ng-template>
+
+  <ng-template #tmpl2>This is template 2. (FALSE)<br/><br/></ng-template>
 
   <ng-template #otherTmpl>No, I do.<br/><br/></ng-template>
+
+  <ng-template #propertyBinding>
+    <img src="{{ angularLogo }}">
+    <img [src]="angularLogo">
+    <img bind-src="angularLogo">
+    <button [disabled]="buttonStatus">My Button</button>
+    <button (click)="myEvent($event)">My Event Button</button>
+    <p>{{ someProperty }}</p>
+  </ng-template>
   `,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   //title = 'app';
+
+  constructor(private dataService:DataService) {
+
+  }
+
+  someProperty:string = ' ';
+
+  ngOnInit() {
+    console.log(this.dataService.cars);
+
+    this.someProperty = this.dataService.myData();
+  }
+
 
   myObject = {
     gender: 'male',
@@ -48,4 +73,13 @@ export class AppComponent {
 
   anotherTest = false;
 
+  displayPropertyBinding = true;
+
+  angularLogo = 'https://angular.io.resources/images/logos/angular2/angular.png';
+
+  buttonStatus = false;
+
+  myEvent(event) {
+    console.log(event);
+  }
 }
