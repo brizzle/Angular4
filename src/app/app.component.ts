@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DataService } from './data.service';
+import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,8 @@ import { DataService } from './data.service';
 
   <div *ngIf="displayPropertyBinding; then propertyBinding"></div>
 
+  <div *ngIf="true; then animationTmpl"></div>
+
   <ng-template #tmpl1>This is template 1. (TRUE)<br/><br/></ng-template>
 
   <ng-template #tmpl2>This is template 2. (FALSE)<br/><br/></ng-template>
@@ -42,14 +45,48 @@ import { DataService } from './data.service';
     <button (click)="myEvent($event)">My Event Button</button>
     <p>{{ someProperty }}</p>
   </ng-template>
+
+  <ng-template #animationTmpl>
+    <p [@myAnimation]='state' (click)="animateMe()">I will animate</p>
+  </ng-template>
+
   `,
-  styleUrls: ['./app.component.css']
+  //styleUrls: ['./app.component.css'],
+  styles: [`
+    p {
+      width: 200px;
+      background: lightgray;
+      margin: 100px auto;
+      text-align: center;
+      padding: 20px;
+      font-size: 1.5em;
+    }
+  `],
+  animations: [
+    trigger('myAnimation', [
+
+      state('small', style({
+        transform: 'scale(1)',
+      })),
+      state('large', style({
+        transform: 'scale(1.2)',
+      })),
+
+      transition('small <=> large', animate('300ms ease-in'))
+    ])
+  ]
 })
 export class AppComponent {
   //title = 'app';
 
+  state: string = 'small';
+
   constructor(private dataService:DataService) {
 
+  }
+
+  animateMe() {
+    this.state = (this.state === 'small' ? 'large' : 'small');
   }
 
   someProperty:string = ' ';
